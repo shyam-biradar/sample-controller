@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: triliovault-pipeline
+  labels:
+    app: triliovault
+    name: triliovault-pipeline
+    template: application-template-triliovault-pipeline
+spec:
+  runPolicy: Serial
+  triggers: 
+    - type: "GitHub"
+      github:
+        secretReference:
+           name: "cicd-webhook-secret"
+  source: 
+    git:
+      uri: "https://github.com/shyam-biradar/sample-controller"
+    sourceSecret:
+      name: "cicd-github-clone-secret"        
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfile: |-
+        node('') {
+            stages {
+              stage('Build') {
+                steps {
+                  sh "echo ThisisBuildStage"
+                }
+              }
+              stage('Test') {
+                steps {
+                  sh "echo ThisisTestStage"
+                }
+              }
+        }
+  output:
+  resources:
+  postCommit:
