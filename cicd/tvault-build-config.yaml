@@ -9,10 +9,6 @@ metadata:
 spec:
   runPolicy: Serial
   triggers: 
-    - type: "GitHub"
-      github:
-        secretReference:
-           name: "cicd-webhook-secret"
   source: 
     git:
       uri: "https://github.com/shyam-biradar/sample-controller"
