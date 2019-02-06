@@ -16,24 +16,34 @@ spec:
   source: 
     git:
       uri: "https://github.com/shyam-biradar/sample-controller"
+      ref: "master"
     sourceSecret:
       name: "cicd-github-clone-secret"        
   strategy:
     type: JenkinsPipeline
     jenkinsPipelineStrategy:
       jenkinsfile: |-
-        node('') {
+        pipeline {
+            agent any
+            triggers { pollSCM('H/1 * * * *') }
             stages {
-              stage('Build') {
+              stage('Build Stage') {
+                agent { docker { image 'golang' } }
                 steps {
                   sh "echo ThisisBuildStage"
+                  git branch: 'master', url: 'https://github.com/shyam-biradar/sample-controller.git'
+                  sh "ls -ll"
+                  sh "make build"
                 }
               }
-              stage('Test') {
+              stage('Test Stage') {
+                agent { docker { image 'golang' } }
                 steps {
                   sh "echo ThisisTestStage"
+                  sh "make test"
                 }
               }
+            }  
         }
   output:
   resources:
